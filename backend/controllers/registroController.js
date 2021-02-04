@@ -35,7 +35,7 @@ exports.crearRegistro = async (req,res) =>{
     let record = req.body;
     let created = new Date();
     try {
-        pool.query("INSERT INTO cachipun (id,nombre,fechaHora,idEncuesta) VALUES ('" + record.idUser +"','" + record.nombre + "','"+ created.toISOString().slice(0,19) +"','"+ record.idEncuesta+"')"
+        pool.query("INSERT INTO cachipun (idHash,nombre,fechaHora,idEncuesta) VALUES ('" + record.idUser +"','" + record.nombre + "','"+ created.toISOString().slice(0,19) +"','"+ record.idEncuesta+"')"
         ,(err,response)=>{
             if(err){
                 console.log(err);
@@ -49,7 +49,23 @@ exports.crearRegistro = async (req,res) =>{
         
     }
 }
-
+exports.crearMovimiento = async (req,res) =>{
+    let record = req.body;
+    try {
+        pool.query("INSERT INTO movimientos (idEncuesta,idUser,movimiento) VALUES ('" + record.idEncuesta + "','" + record.idUser +"','"+record.movimiento +"')"
+        ,(err,response)=>{
+            if(err){
+                console.log(err);
+            }
+            if(response){
+                console.log('inserto');
+            }
+            res.end();
+        })
+    } catch (error) {
+        
+    }
+}
 exports.updateRegistro = async (req,res) =>{
     let id          = req.params.ID;
     let idJuego     = req.params.IDGAME;
