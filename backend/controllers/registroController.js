@@ -17,7 +17,21 @@ exports.getRegistro = async (req,res) =>{
 exports.getById = async (req,res) =>{
     let id = req.params.ID;
     try {
-        pool.query("SELECT * FROM cachipun WHERE id=" + id,(err,response)=>{
+        pool.query(`SELECT COUNT(1) as TOTAL,
+                        case a.movimiento
+                            when 1 then 'piedra'
+                            when 2 then 'papel'
+                            when 2 then 'tijera'
+                            when 2 then 'cordel'
+                            when 2 then 'perro'
+                        end as movimiento,b.nombre
+                    FROM movimientos a
+                        LEFT JOIN cachipun b
+                            ON a.idUser = b.idHash  
+                    WHERE b.playerNum = '` + id  +`'
+                    GROUP BY a.movimiento
+                    ORDER BY TOTAL
+                    LIMIT 1`,(err,response)=>{
             if(err){
                 console.log(err);
             }
@@ -35,7 +49,7 @@ exports.crearRegistro = async (req,res) =>{
     let record = req.body;
     let created = new Date();
     try {
-        pool.query("INSERT INTO cachipun (idHash,nombre,fechaHora,idEncuesta) VALUES ('" + record.idUser +"','" + record.nombre + "','"+ created.toISOString().slice(0,19) +"','"+ record.idEncuesta+"')"
+        pool.query("INSERT INTO cachipun (idHash,nombre,fechaHora,idEncuesta,playerNum) VALUES ('" + record.idUser +"','" + record.nombre + "','"+ created.toISOString().slice(0,19) +"','"+ record.idEncuesta+"'," + record.playerNum +")"
         ,(err,response)=>{
             if(err){
                 console.log(err);
